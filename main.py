@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from database import db
 from contextlib import asynccontextmanager
 
+from database import db
+from routers import users
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
@@ -12,9 +15,10 @@ async def lifespan(app: FastAPI):
         print(e)
 
     yield
-    
+
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(users.router)
 
 @app.get("/")
 async def root():
