@@ -43,3 +43,79 @@ async def get_todos(
 
     return todos
 
+
+
+@router.get("/{id}")
+async def get_todo(
+    id: str,
+    current_user=Depends(get_current_user)
+):
+
+    todo = await todos_collection.find_one(
+        {
+            "_id": ObjectId(id),
+            "owner_id": str(current_user["_id"])
+        }
+    )
+
+    if not todo:
+        raise HTTPException(
+            status_code=404,
+            detail="Todo not found"
+        )
+
+    todo["_id"] = str(todo["_id"])
+
+    return todo
+
+
+@router.put("/{id}")
+async def update_todo(
+    id: str,
+    todo: TodoCreate,
+    current_user=Depends(get_current_user)
+):
+
+    result = await todos_collection.update_one(
+        {
+            "_id": ObjectId(id),
+            "owner_id": str(current_user["_id"])
+        },
+        {
+            "$set": todo.model_dump()
+        }
+    )
+
+    if result.matched_count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Todo not found"
+        )
+
+    return {
+        "message": "Todo updated successfully"
+    }
+
+
+@router.delete("/{id}")
+async def delete_todo(
+    id: str,
+    current_user=Depends(get_current_user)
+):
+
+    result = await todos_collection.delete_one(
+        {
+            "_id": ObjectId(id),
+            "owner_id": str(current_user["_id"])
+        }
+    )
+
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Todo not found"
+        )
+
+    return {
+        "message": "Todo deleted successfully"
+    }
