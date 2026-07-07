@@ -8,6 +8,6 @@ db = client.todo_db
 
 #collections---
 users = db.users
-todos = db.todos
+todos_collection = db.todos
 
 

@@ -10,6 +10,6 @@ class UserRegister(BaseModel):
 
 
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+class TodoCreate(BaseModel):
+    title: str
+    completed: bool = False
