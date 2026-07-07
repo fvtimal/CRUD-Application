@@ -16,3 +16,16 @@ def test_home():
     assert response.json() == {
         "message": "TODO API is running"
     }
+
+def test_register():
+
+    response = client.post(
+        "/users/register",
+        json={
+            "username": "testuser",
+            "email": "test@test.com",
+            "password": "123456"
+        }
+    )
+
+    assert response.status_code == 201
