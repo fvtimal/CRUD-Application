@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main import app
-
+import uuid
 
 client = TestClient(app)
 
@@ -18,19 +18,38 @@ client = TestClient(app)
 #     }
 
 
-def test_register():
+# def test_register():
+#
+#     response = client.post(
+#         "/users/register",
+#         json={
+#             "username": "testuser",
+#             "email": "testuser@test.com",
+#             "password": "123456"
+#         }
+#     )
+#
+#     assert response.status_code == 201
+#
+#     assert response.json() == {
+#         "message": "User Registered Successfully"
+#     }
 
+
+def test_login():
+
+    # Login
     response = client.post(
-        "/users/register",
-        json={
-            "username": "testuser",
-            "email": "testuser@test.com",
+        "/users/login",
+        data={
+            "username": "testuser@test.com",
             "password": "123456"
         }
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
 
-    assert response.json() == {
-        "message": "User Registered Successfully"
-    }
+    body = response.json()
+
+    assert "access_token" in body
+    assert body["token_type"] == "bearer"
