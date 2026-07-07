@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from database import users
-from models import UserRegister
-from security import hash_password, verify_password
+from todo_api.database import users
+from todo_api.models import UserRegister
+from todo_api.security import hash_password, verify_password
 from routers.auth import create_access_token
-from dependencies import get_current_user
+from todo_api.dependencies import get_current_user
 
 
 router = APIRouter(

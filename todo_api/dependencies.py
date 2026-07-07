@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 from bson import ObjectId
 
 from routers.auth import SECRET_KEY, ALGORITHM
-from database import users
+from todo_api.database import users
 
 
 oauth2_scheme = OAuth2PasswordBearer(

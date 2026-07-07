@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from bson import ObjectId
 
-from database import todos_collection
-from models import TodoCreate, TodoResponse
-from dependencies import get_current_user
+from todo_api.database import todos_collection
+from todo_api.models import TodoCreate, TodoResponse
+from todo_api.dependencies import get_current_user
 
 router = APIRouter(
     prefix="/todos",

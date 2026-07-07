@@ -1,8 +1,7 @@
 from fastapi import FastAPI
-from database import db
 from contextlib import asynccontextmanager
 
-from database import db
+from todo_api.database import db
 from routers import users, todos
 
 @asynccontextmanager
