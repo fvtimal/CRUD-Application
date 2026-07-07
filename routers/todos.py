@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from bson import ObjectId
 
 from database import todos_collection
-from models import TodoCreate
+from models import TodoCreate, TodoResponse
 from dependencies import get_current_user
 
 router = APIRouter(
@@ -27,7 +27,7 @@ async def create_todo(
         "message": "Todo created",
         "id": str(result.inserted_id)
     }
-@router.get("/")
+@router.get("/", response_model=list[TodoResponse])
 async def get_todos(
     current_user=Depends(get_current_user)
 ):
@@ -53,7 +53,7 @@ async def get_todos(
 
 
 
-@router.get("/{id}")
+@router.get("/{id}", response_model=list[TodoResponse])
 async def get_todo(
     id: str,
     current_user=Depends(get_current_user)
