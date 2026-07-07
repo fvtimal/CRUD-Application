@@ -38,10 +38,18 @@ async def get_todos(
         }
     ).to_list(length=None)
 
-    for todo in todos:
-        todo["_id"] = str(todo["_id"])
+    formatted_todos = []
 
-    return todos
+    for todo in todos:
+        formatted_todos.append(
+            {
+                "id": str(todo["_id"]),
+                "title": todo["title"],
+                "completed": todo["completed"]
+            }
+        )
+
+    return formatted_todos
 
 
 
@@ -64,9 +72,11 @@ async def get_todo(
             detail="Todo not found"
         )
 
-    todo["_id"] = str(todo["_id"])
-
-    return todo
+    return {
+        "id": str(todo["_id"]),
+        "title": todo["title"],
+        "completed": todo["completed"]
+    }
 
 
 @router.put("/{id}")
