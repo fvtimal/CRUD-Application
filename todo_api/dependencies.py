@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from bson import ObjectId
 
-from routers.auth import SECRET_KEY, ALGORITHM
+from todo_api.auth import SECRET_KEY, ALGORITHM
 from todo_api.database import users
 
 
