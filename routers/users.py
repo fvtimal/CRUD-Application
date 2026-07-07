@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 
 from database import users
-from models import UserRegister, UserLogin
-from security import hash_password
-from security import verify_password
+from models import UserRegister
+from security import hash_password, verify_password
 from routers.auth import create_access_token
+from dependencies import get_current_user
 
 
 router = APIRouter(
@@ -50,43 +51,51 @@ async def register(user: UserRegister):
     }
 
 @router.post("/login")
-async def login(user: UserLogin):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends()
+):
 
     existing_user = await users.find_one(
         {
-            "email": user.email
+            "email": form_data.username
         }
     )
-
 
     if not existing_user:
         raise HTTPException(
             status_code=401,
-            detail="Invalid credentials"
+            detail="Invalid email or password"
         )
 
-
     password_correct = verify_password(
-        user.password,
+        form_data.password,
         existing_user["password"]
     )
-
 
     if not password_correct:
         raise HTTPException(
             status_code=401,
-            detail="Invalid credentials"
+            detail="Invalid email or password"
         )
 
-
-    token = create_access_token(
+    access_token = create_access_token(
         {
             "user_id": str(existing_user["_id"])
         }
     )
 
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+@router.get("/me")
+async def get_profile(
+    current_user = Depends(get_current_user)
+):
 
     return {
-        "access_token": token,
-        "token_type": "bearer"
+        "id": str(current_user["_id"]),
+        "username": current_user["username"],
+        "email": current_user["email"]
     }
