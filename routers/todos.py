@@ -53,30 +53,19 @@ async def get_todos(
 
 
 
-@router.get("/{id}", response_model=list[TodoResponse])
-async def get_todo(
-    id: str,
-    current_user=Depends(get_current_user)
-):
-
+@router.get("/{id}", response_model=TodoResponse)
+async def get_todo(id: str, current_user=Depends(get_current_user)):
     todo = await todos_collection.find_one(
-        {
-            "_id": ObjectId(id),
-            "owner_id": str(current_user["_id"])
-        }
+        {"_id": ObjectId(id), "owner_id": str(current_user["_id"])}
     )
-
     if not todo:
-        raise HTTPException(
-            status_code=404,
-            detail="Todo not found"
-        )
-
+        raise HTTPException(status_code=404, detail="Todo not found")
     return {
         "id": str(todo["_id"]),
         "title": todo["title"],
         "completed": todo["completed"]
     }
+
 
 
 @router.put("/{id}")
