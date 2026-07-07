@@ -67,3 +67,16 @@ def test_login_wrong_password():
     assert response.status_code == 401
 
     assert response.json()["detail"] == "Invalid email or password"
+
+
+def create_test_user_and_login():
+
+    response = client.post(
+        "/users/login",
+        data={
+            "username": "testuser@test.com",
+            "password": "123456"
+        }
+    )
+
+    return response.json()["access_token"]
