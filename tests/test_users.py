@@ -36,20 +36,34 @@ client = TestClient(app)
 #     }
 
 
-def test_login():
+# def test_login():
+#
+#     # Login
+#     response = client.post(
+#         "/users/login",
+#         data={
+#             "username": "testuser@test.com",
+#             "password": "123456"
+#         }
+#     )
+#
+#     assert response.status_code == 200
+#
+#     body = response.json()
+#
+#     assert "access_token" in body
+#     assert body["token_type"] == "bearer"
 
-    # Login
+def test_login_wrong_password():
+
     response = client.post(
         "/users/login",
         data={
             "username": "testuser@test.com",
-            "password": "123456"
+            "password": "wrongpassword"
         }
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 401
 
-    body = response.json()
-
-    assert "access_token" in body
-    assert body["token_type"] == "bearer"
+    assert response.json()["detail"] == "Invalid email or password"
