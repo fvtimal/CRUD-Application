@@ -20,7 +20,19 @@ async def lifespan(app: FastAPI):
 
     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan,
+              title="TODO API",
+              description="""
+              A REST API with FastAPI anda MongoDB.
+              
+              Features
+              - User Registration
+              - JWT Authentication
+              - TODO CRUD
+              - Protected Routes
+              """,
+              version="1.0.0",)
+
 app.include_router(users.router)
 app.include_router(todos.router)
 
