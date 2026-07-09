@@ -12,7 +12,9 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED, summary="Create TODO", description="""
+Creates a new todo for the logged-in user.
+""")
 async def create_todo(
     todo: TodoCreate,
     current_user=Depends(get_current_user)
@@ -33,7 +35,7 @@ async def create_todo(
 
 
 
-@router.get("/", response_model=list[TodoResponse])
+@router.get("/", response_model=list[TodoResponse], summary="Get my TODOS", description="Returns all todos belonging to the authenticated user.")
 async def get_todos(
     current_user=Depends(get_current_user)
 ):
@@ -62,7 +64,7 @@ async def get_todos(
 
 
 
-@router.get("/{id}", response_model=TodoResponse)
+@router.get("/{id}", response_model=TodoResponse, summary="Get TODO", description="Returns one TODO by its ID.")
 async def get_todo(
     id: str,
     current_user=Depends(get_current_user)
@@ -91,7 +93,9 @@ async def get_todo(
 
 
 
-@router.put("/{id}")
+@router.put("/{id}", summary="Update TODO", description="""
+Updates an existing todo.
+""")
 async def update_todo(
     id: str,
     todo: TodoCreate,
@@ -124,7 +128,7 @@ async def update_todo(
 
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", summary="Delete TODO", description="Deletes a TODO")
 async def delete_todo(
     id: str,
     current_user=Depends(get_current_user)
