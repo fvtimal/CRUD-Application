@@ -14,7 +14,14 @@ router = APIRouter(
 )
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED, summary="Register a new user"
+             , description="""
+             Creates a new user account.
+             
+             Passwords are securely hashed before being stored.
+             """)
+
+
 async def register(user: UserRegister):
 
     users = get_users()
@@ -51,7 +58,9 @@ async def register(user: UserRegister):
         "message": "User Registered Successfully"
     }
 
-@router.post("/login")
+@router.post("/login", summary="Authenticate user", description="""
+Logs in a user and returns a JWT access token.
+""")
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends()
 ):
@@ -91,7 +100,11 @@ async def login(
         "token_type": "bearer"
     }
 
-@router.get("/me")
+@router.get("/me", summary="Get current user", description="""
+Returns the currently authenticated user.
+""")
+
+
 async def get_profile(
     current_user = Depends(get_current_user)
 ):
