@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from bson import ObjectId
 
-from todo_api.database import todos_collection
+from todo_api.database import get_todos as get_todos_collection
 from todo_api.models import TodoCreate, TodoResponse
 from todo_api.dependencies import get_current_user
+
 
 router = APIRouter(
     prefix="/todos",
@@ -17,6 +18,8 @@ async def create_todo(
     current_user=Depends(get_current_user)
 ):
 
+    todos_collection = get_todos_collection()
+
     todo_dict = todo.model_dump()
 
     todo_dict["owner_id"] = str(current_user["_id"])
@@ -27,16 +30,22 @@ async def create_todo(
         "message": "Todo created",
         "id": str(result.inserted_id)
     }
+
+
+
 @router.get("/", response_model=list[TodoResponse])
 async def get_todos(
     current_user=Depends(get_current_user)
 ):
+
+    todos_collection = get_todos_collection()
 
     todos = await todos_collection.find(
         {
             "owner_id": str(current_user["_id"])
         }
     ).to_list(length=None)
+
 
     formatted_todos = []
 
@@ -54,12 +63,26 @@ async def get_todos(
 
 
 @router.get("/{id}", response_model=TodoResponse)
-async def get_todo(id: str, current_user=Depends(get_current_user)):
+async def get_todo(
+    id: str,
+    current_user=Depends(get_current_user)
+):
+
+    todos_collection = get_todos_collection()
+
     todo = await todos_collection.find_one(
-        {"_id": ObjectId(id), "owner_id": str(current_user["_id"])}
+        {
+            "_id": ObjectId(id),
+            "owner_id": str(current_user["_id"])
+        }
     )
+
     if not todo:
-        raise HTTPException(status_code=404, detail="Todo not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Todo not found"
+        )
+
     return {
         "id": str(todo["_id"]),
         "title": todo["title"],
@@ -75,6 +98,8 @@ async def update_todo(
     current_user=Depends(get_current_user)
 ):
 
+    todos_collection = get_todos_collection()
+
     result = await todos_collection.update_one(
         {
             "_id": ObjectId(id),
@@ -85,15 +110,18 @@ async def update_todo(
         }
     )
 
+
     if result.matched_count == 0:
         raise HTTPException(
             status_code=404,
             detail="Todo not found"
         )
 
+
     return {
         "message": "Todo updated successfully"
     }
+
 
 
 @router.delete("/{id}")
@@ -102,6 +130,8 @@ async def delete_todo(
     current_user=Depends(get_current_user)
 ):
 
+    todos_collection = get_todos_collection()
+
     result = await todos_collection.delete_one(
         {
             "_id": ObjectId(id),
@@ -109,11 +139,13 @@ async def delete_todo(
         }
     )
 
+
     if result.deleted_count == 0:
         raise HTTPException(
             status_code=404,
             detail="Todo not found"
         )
+
 
     return {
         "message": "Todo deleted successfully"

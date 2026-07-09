@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from todo_api.database import users
+from todo_api.database import get_users
 from todo_api.models import UserRegister
 from todo_api.security import hash_password, verify_password
 from todo_api.auth import create_access_token
@@ -17,6 +17,7 @@ router = APIRouter(
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserRegister):
 
+    users = get_users()
     existing_user = await users.find_one(
         {
             "email": user.email
@@ -55,6 +56,7 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends()
 ):
 
+    users = get_users()
     existing_user = await users.find_one(
         {
             "email": form_data.username

@@ -1,20 +1,24 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from todo_api.database import db
+from todo_api.database import get_db
 from routers import users, todos
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+
     try:
+        db = get_db()
+
         await db.command("ping")
+
         print("connected to MongoDB")
+
     except Exception as e:
         print("MongoDB connection failed")
         print(e)
 
     yield
-
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(users.router)

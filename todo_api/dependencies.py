@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 from bson import ObjectId
 
 from todo_api.auth import SECRET_KEY, ALGORITHM
-from todo_api.database import users
+from todo_api.database import get_users
 
 
 oauth2_scheme = OAuth2PasswordBearer(
@@ -39,6 +39,7 @@ async def get_current_user(
         )
 
 
+    users = get_users()
     user = await users.find_one(
         {
             "_id": ObjectId(user_id)
