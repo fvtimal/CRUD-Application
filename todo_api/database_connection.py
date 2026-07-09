@@ -1,15 +1,23 @@
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import MongoClient
 
+import os
+
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from pymongo import MongoClient
+from dotenv import load_dotenv
+
+
+load_dotenv()
+database_name = os.getenv("DATABASE_NAME")
 
 _async_client = None
 _sync_client = None
 
 
-mongo_uri = "mongodb://localhost:27017"
+mongo_uri = os.getenv("MONGO_URI")
 
 
-def get_database(database="todo_db", force_async=True):
+def get_database(database = database_name, force_async=True):
 
     global _async_client
     global _sync_client
